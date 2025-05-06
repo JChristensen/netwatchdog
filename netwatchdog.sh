@@ -26,7 +26,7 @@ msg="$(date "+%F %T") Network connectivity: $conn"
 # the possible connectivity states are: none, portal, limited, full, unknown.
 # anything other than "full" is some sort of issue, so reboot.
 if [ $conn != "full" ]; then
-    # write the message to our log file, sentinel file,  and to syslog
+    # write the message to our log file, sentinel file, and to syslog
     msg="$msg ... Reboot in one minute."
     echo $msg >>$logfile
     echo $msg >>$sentinel
