@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to check for net.watch.dog sentinel file.
+# Script to check for net_watch_dog sentinel file.
 # If present, send email notification that a reboot occurred,
 # and delete the sentinel file.
 # A regular user can schedule this script with cron to run at boot.
