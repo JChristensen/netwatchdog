@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to check for net.watch.dog sentinel file.
+# Script to check for net_watch_dog sentinel file.
 # If present, send email notification that a reboot occurred,
 # and delete the sentinel file.
 # A regular user can schedule this script with cron to run at boot.
@@ -40,7 +40,7 @@ sentinel="/home/$(id -nu 1000)/net_watch_dog"
 
 # check to see if it exists, if so, send email and delete it.
 if [ -e "$sentinel" ]; then
-    # get the connectivity state from Network Manager
+    # get the connectivity state from wpa_supplicant
     conn=$(wpaStatus)
     # send email only if we are connected
     if [ $conn == "COMPLETED" ]; then

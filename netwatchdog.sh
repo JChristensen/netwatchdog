@@ -36,7 +36,7 @@ logfile="/home/$(id -nu 1000)/$(basename --suffix=.sh $0).log"
 # a sentinel file to signal the bootcheck.sh script to send an email
 sentinel="/home/$(id -nu 1000)/net_watch_dog"
 
-# get the connectivity state from Network Manager
+# get the connectivity state from wpa_supplicant
 conn=$(wpaStatus)
 
 # make a log message
