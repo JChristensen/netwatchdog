@@ -11,6 +11,25 @@
 #
 # J.Christensen 03May2025
 
+# A function to provide similar functionality to "nmcli net conn" on a
+# system in that runs wpa_supplicant and not Network Manager.
+# This is to allow the netwatchdog scripts to run on a system that does
+# not use Network Manager, e.g. bullseye.
+# The "wpa_cli status" command returns a multi-line report. We parse out
+# the value for "wpa_state" and return that. If wpa_state is not found,
+# we return "unknown".
+# Where the nmcli command returns "full" to indicate full Internet
+# connectivity, this function will return "COMPLETE".
+wpaStatus()
+{
+    wpaStatus=$(wpa_cli status)
+    if [[ $wpaStatus =~ wpa_state=([[:alpha:]]*) ]]; then
+        echo "${BASH_REMATCH[1]}"
+    else
+        echo "unknown"
+    fi
+}
+
 # a persistent log file that we write to before rebooting.
 logfile="/home/$(id -nu 1000)/$(basename --suffix=.sh $0).log"
 
@@ -18,14 +37,13 @@ logfile="/home/$(id -nu 1000)/$(basename --suffix=.sh $0).log"
 sentinel="/home/$(id -nu 1000)/net_watch_dog"
 
 # get the connectivity state from Network Manager
-conn=$(nmcli networking connectivity)
+conn=$(wpaStatus)
 
 # make a log message
 msg="$(date "+%F %T") Network connectivity: $conn"
 
-# the possible connectivity states are: none, portal, limited, full, unknown.
-# anything other than "full" is some sort of issue, so reboot.
-if [ $conn != "full" ]; then
+# "COMPLETED" indicates wpa_supplicant has successfully connected.
+if [ $conn != "COMPLETED" ]; then
     # write the message to our log file, sentinel file, and to syslog
     msg="$msg ... Reboot in one minute."
     echo $msg >>$logfile

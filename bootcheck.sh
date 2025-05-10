@@ -7,6 +7,25 @@
 #
 # J.Christensen 04May2025
 
+# A function to provide similar functionality to "nmcli net conn" on a
+# system in that runs wpa_supplicant and not Network Manager.
+# This is to allow the netwatchdog scripts to run on a system that does
+# not use Network Manager, e.g. bullseye.
+# The "wpa_cli status" command returns a multi-line report. We parse out
+# the value for "wpa_state" and return that. If wpa_state is not found,
+# we return "unknown".
+# Where the nmcli command returns "full" to indicate full Internet
+# connectivity, this function will return "COMPLETE".
+wpaStatus()
+{
+    wpaStatus=$(wpa_cli status)
+    if [[ $wpaStatus =~ wpa_state=([[:alpha:]]*) ]]; then
+        echo "${BASH_REMATCH[1]}"
+    else
+        echo "unknown"
+    fi
+}
+
 # email recipient
 to="christensen.jack.a@gmail.com"
 
@@ -22,9 +41,9 @@ sentinel="/home/$(id -nu 1000)/net_watch_dog"
 # check to see if it exists, if so, send email and delete it.
 if [ -e "$sentinel" ]; then
     # get the connectivity state from Network Manager
-    conn=$(nmcli networking connectivity)
+    conn=$(wpaStatus)
     # send email only if we are connected
-    if [ $conn == "full" ]; then
+    if [ $conn == "COMPLETED" ]; then
         subj="$(hostname) netwatchdog automated reboot"
         /usr/local/bin/pymail -t $to -s "$subj" <$sentinel
         rm $sentinel
