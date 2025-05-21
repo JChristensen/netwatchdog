@@ -22,8 +22,8 @@
 # connectivity, this function will return "COMPLETE".
 wpaStatus()
 {
-    wpaStatus=$(wpa_cli status)
-    if [[ $wpaStatus =~ wpa_state=([[:alpha:]]*) ]]; then
+    stat=$(/usr/sbin/wpa_cli status)
+    if [[ $stat =~ wpa_state=([[:alpha:]]*) ]]; then
         echo "${BASH_REMATCH[1]}"
     else
         echo "unknown"
