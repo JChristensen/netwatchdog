@@ -51,5 +51,7 @@ if [ -e "$sentinel" ]; then
         # still no network, write a message to the log file instead
         msg="$(date "+%F %T") Unable to send email. Network connectivity: $conn"
         echo $msg >>$logfile
+        # remove the sentinel file anyway, lest it cause confusion with a future boot
+        rm $sentinel        
     fi
 fi
