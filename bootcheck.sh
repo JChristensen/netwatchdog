@@ -18,7 +18,8 @@ netStatus()
     tr2=$(echo "$tr1" | tail -n +2)
     # check the traceroute results for the target ip.
     # if not present, then we failed to reach it.
-    if [[ "$tr2" =~ "$ip" ]]; then
+    regex="[[:space:]]+$ip[[:space:]]+"
+    if [[ $tr2 =~ $regex ]]; then
         echo "OK"
     else
         echo "FAIL"

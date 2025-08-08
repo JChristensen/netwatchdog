@@ -44,7 +44,8 @@ msg="$(date "+%F %T") $scriptname status: $trlast"
 
 # check the traceroute results for the target ip.
 # if not present, then we failed to reach it, so schedule a reboot.
-if [[ "$tr2" =~ "$ip" ]]; then
+regex="[[:space:]]+$ip[[:space:]]+"
+if [[ $tr2 =~ $regex ]]; then
     msg="$msg (OK)"
     logger $msg
 else
