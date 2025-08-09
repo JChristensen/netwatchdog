@@ -40,16 +40,16 @@ logpath="/home/$(id -nu 1000)"
 # the name of this script, less the .sh suffix
 scriptname=$(basename --suffix=.sh $0)
 
-# wait a bit to allow time for other cron tasks that run on reboot
-sleep 120
-
 # a persistent log file that we write to before rebooting.
 logfile="$logpath/$scriptname.log"
 
 # the sentinel file that signals this script to send an email
 sentinel="$logpath/net_watch_dog"
 
-# check to see if it exists, if so, send email and delete it.
+# wait a bit to allow time for other cron tasks that run on reboot
+sleep 120
+
+# check to see if the sentinel exists, if so, send email and delete it.
 if [ -e "$sentinel" ]; then
     # get network status
     conn=$(netStatus "$ip")

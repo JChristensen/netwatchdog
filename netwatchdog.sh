@@ -30,6 +30,10 @@ logfile="$logpath/$scriptname.log"
 # a sentinel file to signal the bootcheck.sh script to send an email
 sentinel="$logpath/net_watch_dog"
 
+# log video core info to syslog
+vc="$scriptname vcinfo: $(vcgencmd measure_temp) $(vcgencmd get_throttled) $(vcgencmd measure_volts)"
+logger $vc
+
 # do the traceroute, capture the results in a variable
 tr1=$(traceroute -n $ip)
 
@@ -39,8 +43,9 @@ tr2=$(echo "$tr1" | tail -n +2)
 # get just the last line for the log message
 trlast=$(echo "$tr1" | tail -1)
 
-# make a log message
-msg="$(date "+%F %T") $scriptname status: $trlast"
+# make a log message and timestamp
+msg="$scriptname trace: $trlast"
+ts=$(date "+%F %T")
 
 # check the traceroute results for the target ip.
 # if not present, then we failed to reach it, so schedule a reboot.
@@ -51,8 +56,8 @@ if [[ $tr2 =~ $regex ]]; then
 else
     # write the message to our log file, sentinel file, and to syslog
     msg="$msg (FAIL) ... Reboot in one minute."
-    echo $msg >>$logfile
-    echo $msg >>$sentinel
     logger $msg
     /usr/sbin/shutdown --reboot +1
+    echo "$ts $msg" >>$logfile
+    echo "$ts $msg" >>$sentinel
 fi
