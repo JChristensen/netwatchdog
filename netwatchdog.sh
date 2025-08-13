@@ -31,8 +31,8 @@ logfile="$logpath/$scriptname.log"
 sentinel="$logpath/net_watch_dog"
 
 # log video core info to syslog
-vc="$scriptname vcinfo: $(vcgencmd measure_temp) $(vcgencmd get_throttled) $(vcgencmd measure_volts)"
-logger $vc
+#vc="$scriptname vcinfo: $(vcgencmd measure_temp) $(vcgencmd get_throttled) $(vcgencmd measure_volts core) $(vcgencmd measure_clock arm)"
+#logger $vc
 
 # do the traceroute, capture the results in a variable
 tr1=$(traceroute -n $ip)
